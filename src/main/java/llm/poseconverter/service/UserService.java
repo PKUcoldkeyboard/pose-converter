@@ -1,12 +1,13 @@
 package llm.poseconverter.service;
 
+import llm.poseconverter.dto.RegisterDto;
 import llm.poseconverter.entity.User;
 
 public interface UserService {
     /*
      * 注册
      */
-    User register(User userToAdd);
+    User register(RegisterDto registerDto);
 
     /*
      * 登录，返回用户id
