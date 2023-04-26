@@ -3,9 +3,9 @@ package llm.poseconverter.service.impl;
 import cn.dev33.satoken.secure.BCrypt;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import llm.poseconverter.entity.User;
+import llm.poseconverter.exception.CustomException;
 import llm.poseconverter.mapper.UserMapper;
 import llm.poseconverter.service.UserService;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -17,14 +17,10 @@ public class UserServiceImpl implements UserService {
     @Resource
     private UserMapper userMapper;
 
-    // 获取配置文件中的private-key属性
-    @Value("${private-key}")
-    private String privateKey;
-
     @Override
     public User register(User userToAdd) {
         QueryWrapper<User> wrapper = new QueryWrapper<>();
-        wrapper.eq("user_name", userToAdd.getUserName());
+        wrapper.eq("user_name", userToAdd.getUsername());
         if (userMapper.selectOne(wrapper) != null) {
             throw new RuntimeException("用户名已存在");
         }
@@ -40,18 +36,16 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public String login(String userName, String password) {
+    public Long login(String username, String password) {
         // 验证用户名和密码是否正确
         QueryWrapper<User> wrapper = new QueryWrapper<>();
-        wrapper.eq("user_name", userName);
+        wrapper.eq("user_name", username);
         User user = userMapper.selectOne(wrapper);
         if (user == null || !BCrypt.checkpw(password, user.getPassword())) {
-            throw new RuntimeException("用户名或密码错误");
+            throw new CustomException("用户名或密码错误");
         }
-        // 通过认证，生成token返回
-
-
-        return null;
+        // 通过认证
+        return user.getId();
     }
 
     @Override

@@ -1,17 +1,31 @@
 package llm.poseconverter.entity;
 
 import java.time.LocalDateTime;
-import java.util.Objects;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+
+@TableName("pc_users")
 public class User {
+    @TableId(type = IdType.AUTO)
     private Long id;
-    private String userName;
+    @TableField("user_name")
+    private String username;
+    @TableField("password")
     private String password;
+    @TableField("email")
     private String email;
+    @TableField("gender")
     private String gender;
+    @TableField("profile")
     private String profile;
+    @TableField("user_type")
     private String userType;
+    @TableField("created_at")
     private LocalDateTime createAt;
+    @TableField("updated_at")
     private LocalDateTime updateAt;
 
     public Long getId() {
@@ -22,12 +36,12 @@ public class User {
         this.id = id;
     }
 
-    public String getUserName() {
-        return userName;
+    public String getUsername() {
+        return username;
     }
 
-    public void setUserName(String userName) {
-        this.userName = userName;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getPassword() {
@@ -87,30 +101,83 @@ public class User {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        User user = (User) o;
-        return Objects.equals(id, user.id) && Objects.equals(userName, user.userName) && Objects.equals(password, user.password) && Objects.equals(email, user.email) && Objects.equals(gender, user.gender) && Objects.equals(profile, user.profile) && Objects.equals(userType, user.userType) && Objects.equals(createAt, user.createAt) && Objects.equals(updateAt, user.updateAt);
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((id == null) ? 0 : id.hashCode());
+        result = prime * result + ((username == null) ? 0 : username.hashCode());
+        result = prime * result + ((password == null) ? 0 : password.hashCode());
+        result = prime * result + ((email == null) ? 0 : email.hashCode());
+        result = prime * result + ((gender == null) ? 0 : gender.hashCode());
+        result = prime * result + ((profile == null) ? 0 : profile.hashCode());
+        result = prime * result + ((userType == null) ? 0 : userType.hashCode());
+        result = prime * result + ((createAt == null) ? 0 : createAt.hashCode());
+        result = prime * result + ((updateAt == null) ? 0 : updateAt.hashCode());
+        return result;
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hash(id, userName, password, email, gender, profile, userType, createAt, updateAt);
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        User other = (User) obj;
+        if (id == null) {
+            if (other.id != null)
+                return false;
+        } else if (!id.equals(other.id))
+            return false;
+        if (username == null) {
+            if (other.username != null)
+                return false;
+        } else if (!username.equals(other.username))
+            return false;
+        if (password == null) {
+            if (other.password != null)
+                return false;
+        } else if (!password.equals(other.password))
+            return false;
+        if (email == null) {
+            if (other.email != null)
+                return false;
+        } else if (!email.equals(other.email))
+            return false;
+        if (gender == null) {
+            if (other.gender != null)
+                return false;
+        } else if (!gender.equals(other.gender))
+            return false;
+        if (profile == null) {
+            if (other.profile != null)
+                return false;
+        } else if (!profile.equals(other.profile))
+            return false;
+        if (userType == null) {
+            if (other.userType != null)
+                return false;
+        } else if (!userType.equals(other.userType))
+            return false;
+        if (createAt == null) {
+            if (other.createAt != null)
+                return false;
+        } else if (!createAt.equals(other.createAt))
+            return false;
+        if (updateAt == null) {
+            if (other.updateAt != null)
+                return false;
+        } else if (!updateAt.equals(other.updateAt))
+            return false;
+        return true;
     }
 
     @Override
     public String toString() {
-        return "User{" +
-                "id=" + id +
-                ", userName='" + userName + '\'' +
-                ", password='" + password + '\'' +
-                ", email='" + email + '\'' +
-                ", gender='" + gender + '\'' +
-                ", profile='" + profile + '\'' +
-                ", userType='" + userType + '\'' +
-                ", createAt=" + createAt +
-                ", updateAt=" + updateAt +
-                '}';
+        return "User [id=" + id + ", username=" + username + ", password=" + password + ", email=" + email + ", gender="
+                + gender + ", profile=" + profile + ", userType=" + userType + ", createAt=" + createAt + ", updateAt="
+                + updateAt + "]";
     }
+
 }

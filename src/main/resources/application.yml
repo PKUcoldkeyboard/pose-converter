@@ -27,21 +27,14 @@ spring:
       max-request-size: 100MB
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://root:ZyV8fmPGaAzM6DDyHBuh@containers-us-west-12.railway.app:5638/railway?useUnicode=true&characterEncoding=utf-8&useSSL=true&serverTimezone=Asia/Shanghai
+    url: jdbc:mysql://root:heart39100@gz-cdb-l5luhhxp.sql.tencentcdb.com:63738/pose-converter?useUnicode=true&characterEncoding=utf-8&useSSL=true&serverTimezone=Asia/Shanghai
     username: root
-    password: ZyV8fmPGaAzM6DDyHBuh
-    hikari:
-      connection-timeout: 30000
-      maximum-pool-size: 15
-      minimum-idle: 5
-      idle-timeout: 30000
-      max-lifetime: 30000
-      pool-name: hikariCP
+    password: heart393100
 
-mybatis-plus:
-  configuration:
-    # 开启SQL语句打印
-    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+# mybatis-plus:
+#   configuration:
+#     # 开启SQL语句打印
+#     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 
 # 加密公私钥
 private-key: MIICdwIBADANBgkqhkiG9w0BAQEFAASCAmEwggJdAgEAAoGBAKm9sfBn+f9LLn3zXSOQdMUa8aVs9b5q2GflWmYtF+WlNJPULpwqQPpOGMJ1qIHFyims6ilRGvI++Jz2rXHgnexV0u0JNgCRh0fKVeDlWTq5YQyW4WcjtEGV+loa4hhyRwID/DY/hpfDDlMxDpBHzYbrIBL2vPx9S2zz+hM4gX3dAgMBAAECgYBhHgkGLOeL2v8xzyFWLNuyvtTNuobsOQOyhjZvyZMnsJthjYBRl5dv32kpMdqEzZ76s1WS6DXLrp3eaQEZ69NOqnt/pPlki3dzDrUzQvKp+176nN500nuyO3fdPwn7CrDJMogDedb/GTAcfKUdFAyF98Kk0gDQCq6g7tAU3I/IPQJBAOeYRtqIfSyxvZp3WQoWBvE7tjpD3NYUjUKCMMwb5jZehOEYQ5UcrySl+Yn4nX+RfkY2QhAzWem6PR14OK47MrcCQQC7oMpLiUHYxh7QeIoGyxdy2o8akYbGIl9TfTxlssywND6Mj4JG8CARcdldO08LRE0pAIhz20uIbWh3dWxtLDALAkEAon3HCMFHAjrbCyu9v0PhLxR0MME4isP0sLtjvXG9vlvm44AAuvhbMl15jgJvjvfoHx8mjvNYnJLdGnYlXqmOVQJBAJlext3V9dg/osKgNZt1+dXtqBp8qKFfSXLSpUMwU7cZDaQSTtizwlLgMGDQcT1xeG0yvVePA4AihslXV+kpvJ8CQGHBqLIhqgbb8ZSqJ2bdeXezPug3+WzVnY5SAQtBtE7t8FKUNZty10RhLZU3YsdhfV2F4jZHpBPygJ6efCs0S+k=

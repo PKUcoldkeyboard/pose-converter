@@ -9,9 +9,9 @@ public interface UserService {
     User register(User userToAdd);
 
     /*
-     * 登录
+     * 登录，返回用户id
      */
-    String login(String userName, String password);
+    Long login(String username, String password);
 
     /*
     * 更新用户信息
