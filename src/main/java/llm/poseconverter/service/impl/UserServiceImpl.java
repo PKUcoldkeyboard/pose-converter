@@ -4,6 +4,7 @@ import cn.dev33.satoken.secure.BCrypt;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 
 import llm.poseconverter.dto.RegisterDto;
+import llm.poseconverter.dto.UpdateUserDto;
 import llm.poseconverter.entity.User;
 import llm.poseconverter.exception.CustomException;
 import llm.poseconverter.mapper.UserMapper;
@@ -25,6 +26,11 @@ public class UserServiceImpl implements UserService {
         wrapper.eq("user_name", registerDto.getUsername());
         if (userMapper.selectOne(wrapper) != null) {
             throw new CustomException("用户名已存在");
+        }
+        wrapper = new QueryWrapper<>();
+        wrapper.eq("email", registerDto.getEmail());
+        if (userMapper.selectOne(wrapper) != null) {
+            throw new CustomException("邮箱已存在");
         }
         // Bcrypt加密密码
         String hashPassword = BCrypt.hashpw(registerDto.getPassword(), BCrypt.gensalt());
@@ -57,7 +63,21 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User update(User user) {
-        return null;
+    public User update(Long id, UpdateUserDto updateUserDto) {
+        User user = userMapper.selectById(id);
+        if (user == null) {
+            throw new CustomException("用户不存在");
+        }
+        if (updateUserDto.getGender() != null) {
+            user.setGender(updateUserDto.getGender());
+        }
+        if (updateUserDto.getProfile() != null) {
+            user.setProfile(updateUserDto.getProfile());
+        }
+        if (updateUserDto.getPassword() != null) {
+            user.setPassword(BCrypt.hashpw(updateUserDto.getPassword(), BCrypt.gensalt()));
+        }
+        userMapper.updateById(user);
+        return user;
     }
 }

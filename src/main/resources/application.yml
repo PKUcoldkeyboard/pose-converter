@@ -3,6 +3,12 @@ server:
   servlet:
     context-path: /
 
+minio:
+  endpoint: "http://localhost:9000"
+  bucketName: pose-converter
+  accessKey: NtI2o1FUgSdrRFdd
+  secretKey: c6QGip2GR3PftoHfOSQW3XQwTN15gUmr
+
 sa-token:
   # token名称 (同时也是cookie名称)
   token-name: sa-token

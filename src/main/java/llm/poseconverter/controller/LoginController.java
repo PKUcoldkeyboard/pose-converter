@@ -37,12 +37,15 @@ public class LoginController {
         return SaResult.data(tokenMap).setMsg("登录成功！");
     }
 
-    @GetMapping("logout")
-    @ResponseBody
-    public SaResult logout() {
-        StpUtil.logout();
-        return SaResult.ok("注销成功！");
-    }
+    // Stateless无状态模式不支持注销，需要在前端清除token
+    // @GetMapping("logout")
+    // @ResponseBody
+    // public SaResult logout(@RequestHeader("sa-token") String token) {
+    //     // 取出请求头
+    //     System.out.println(token);
+    //     StpUtil.logoutByTokenValue(token);
+    //     return SaResult.ok("注销成功！");
+    // }
 
     @GetMapping("test")
     @ResponseBody

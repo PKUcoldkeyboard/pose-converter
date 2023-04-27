@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import cn.dev33.satoken.exception.NotLoginException;
 import cn.dev33.satoken.util.SaResult;
+import io.minio.errors.MinioException;
 
 /**
  * 全局异常捕获
@@ -35,6 +36,12 @@ public class GlobalExceptionHandler {
     public SaResult error(NotLoginException e) {
         return SaResult.error("请先登录！").setCode(401);
     }
+
+    @ExceptionHandler(MinioException.class)
+	@ResponseBody
+	public SaResult error(MinioException e) {
+		return SaResult.error("文件客户端出错");
+	}
 
     // 自定义异常处理
     @ExceptionHandler(CustomException.class)

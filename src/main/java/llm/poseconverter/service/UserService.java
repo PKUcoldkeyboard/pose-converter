@@ -1,6 +1,7 @@
 package llm.poseconverter.service;
 
 import llm.poseconverter.dto.RegisterDto;
+import llm.poseconverter.dto.UpdateUserDto;
 import llm.poseconverter.entity.User;
 
 public interface UserService {
@@ -17,5 +18,5 @@ public interface UserService {
     /*
     * 更新用户信息
      */
-    User update(User user);
+    User update(Long id, UpdateUserDto updateUserDto);
 }
