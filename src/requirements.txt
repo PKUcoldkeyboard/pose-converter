@@ -8,3 +8,5 @@ PyQt5
 mediapipe
 opencv-python
 flask
+flask_cors
+minio
