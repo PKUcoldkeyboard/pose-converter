@@ -26,7 +26,7 @@ public class UserController {
     
     @PostMapping("register")
     @ResponseBody
-    public SaResult register(@RequestBody @Valid RegisterDto registerDto) {
+    public SaResult register(@RequestBody @Valid RegisterDto registerDto) throws Exception {
         User user = userService.register(registerDto);
         user.setPassword(registerDto.getPassword());
         return SaResult.ok("注册成功！").setData(user);

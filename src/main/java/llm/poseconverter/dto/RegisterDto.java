@@ -7,10 +7,7 @@ public class RegisterDto {
     private String username;
     @NotBlank(message = "密码不能为空")
     private String password;
-    @NotBlank(message = "邮箱不能为空")
-    private String email;
-    @NotBlank(message = "性别不能为空")
-    private String gender;
+
     public String getUsername() {
         return username;
     }
@@ -22,18 +19,6 @@ public class RegisterDto {
     }
     public void setPassword(String password) {
         this.password = password;
-    }
-    public String getEmail() {
-        return email;
-    }
-    public void setEmail(String email) {
-        this.email = email;
-    }
-    public String getGender() {
-        return gender;
-    }
-    public void setGender(String gender) {
-        this.gender = gender;
     }
     
 }

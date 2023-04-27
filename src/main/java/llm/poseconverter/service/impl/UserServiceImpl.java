@@ -8,11 +8,13 @@ import llm.poseconverter.dto.UpdateUserDto;
 import llm.poseconverter.entity.User;
 import llm.poseconverter.exception.CustomException;
 import llm.poseconverter.mapper.UserMapper;
+import llm.poseconverter.service.MinioService;
 import llm.poseconverter.service.UserService;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
 import java.time.LocalDateTime;
+
+import javax.annotation.Resource;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -20,29 +22,28 @@ public class UserServiceImpl implements UserService {
     @Resource
     private UserMapper userMapper;
 
+    @Resource
+    private MinioService minioService;
+
     @Override
-    public User register(RegisterDto registerDto) {
+    public User register(RegisterDto registerDto) throws Exception {
         QueryWrapper<User> wrapper = new QueryWrapper<>();
-        wrapper.eq("user_name", registerDto.getUsername());
+        wrapper.eq("username", registerDto.getUsername());
         if (userMapper.selectOne(wrapper) != null) {
             throw new CustomException("用户名已存在");
         }
-        wrapper = new QueryWrapper<>();
-        wrapper.eq("email", registerDto.getEmail());
-        if (userMapper.selectOne(wrapper) != null) {
-            throw new CustomException("邮箱已存在");
-        }
+
         // Bcrypt加密密码
         String hashPassword = BCrypt.hashpw(registerDto.getPassword(), BCrypt.gensalt());
 
         User user = new User();
         user.setUsername(registerDto.getUsername());
         user.setPassword(hashPassword);
-        user.setGender(registerDto.getGender());
-        user.setEmail(registerDto.getEmail());
-        user.setUserType("0");
-        user.setCreateAt(LocalDateTime.now());
-        user.setUpdateAt(LocalDateTime.now());
+        user.setCreateTime(LocalDateTime.now());
+        user.setUpdateTime(LocalDateTime.now());
+
+        // 创建存储桶
+        minioService.addBucket(user.getUsername());
 
         // 保存用户信息
         userMapper.insert(user);
@@ -53,7 +54,7 @@ public class UserServiceImpl implements UserService {
     public Long login(String username, String password) {
         // 验证用户名和密码是否正确
         QueryWrapper<User> wrapper = new QueryWrapper<>();
-        wrapper.eq("user_name", username);
+        wrapper.eq("username", username);
         User user = userMapper.selectOne(wrapper);
         if (user == null || !BCrypt.checkpw(password, user.getPassword())) {
             throw new CustomException("用户名或密码错误");
@@ -68,15 +69,11 @@ public class UserServiceImpl implements UserService {
         if (user == null) {
             throw new CustomException("用户不存在");
         }
-        if (updateUserDto.getGender() != null) {
-            user.setGender(updateUserDto.getGender());
-        }
-        if (updateUserDto.getProfile() != null) {
-            user.setProfile(updateUserDto.getProfile());
-        }
+
         if (updateUserDto.getPassword() != null) {
             user.setPassword(BCrypt.hashpw(updateUserDto.getPassword(), BCrypt.gensalt()));
         }
+        user.setUpdateTime(LocalDateTime.now());
         userMapper.updateById(user);
         return user;
     }

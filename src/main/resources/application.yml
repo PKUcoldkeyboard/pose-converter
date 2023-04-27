@@ -5,7 +5,6 @@ server:
 
 minio:
   endpoint: "http://localhost:9000"
-  bucketName: pose-converter
   accessKey: NtI2o1FUgSdrRFdd
   secretKey: c6QGip2GR3PftoHfOSQW3XQwTN15gUmr
 
@@ -35,9 +34,9 @@ spring:
       max-request-size: 100MB
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://root:ZyV8fmPGaAzM6DDyHBuh@containers-us-west-12.railway.app:5638/railway?useUnicode=true&characterEncoding=utf-8&useSSL=true&serverTimezone=Asia/Shanghai
+    url: jdbc:mysql://root:MOQ1zNH3YqWYF4smHiQf@containers-us-west-149.railway.app:7992/railway?useUnicode=true&characterEncoding=utf-8&useSSL=true&serverTimezone=Asia/Shanghai
     username: root
-    password: ZyV8fmPGaAzM6DDyHBuh
+    password: MOQ1zNH3YqWYF4smHiQf
 
 # mybatis-plus:
 #   configuration:

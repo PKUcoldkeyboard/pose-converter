@@ -20,12 +20,12 @@ public class VideoController {
 
     @PostMapping("convert")
     @ResponseBody
-    public SaResult convert(@RequestParam("file") MultipartFile file) throws Exception {
+    public SaResult convert(@RequestParam String bucketName, @RequestParam("file") MultipartFile file) throws Exception {
         // 检查是否是mp4
         String fileName = file.getOriginalFilename();
         if (!fileName.endsWith(".mp4")) {
             return SaResult.error("请上传mp4格式的视频");
         }
-        return videoService.convert(file);
+        return videoService.convert(bucketName, file);
     }
 }

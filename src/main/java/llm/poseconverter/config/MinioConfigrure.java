@@ -2,16 +2,20 @@ package llm.poseconverter.config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
-import org.springframework.stereotype.Component;
+import org.springframework.context.annotation.Configuration;
 
 import io.minio.MinioClient;
 
-@Component
+@Configuration
 public class MinioConfigrure {
+
     @Value("${minio.endpoint}")
 	private String endPoint;
+
 	@Value("${minio.accessKey}")
+
 	private String accessKey;
+
 	@Value("${minio.secretKey}")
 	private String secretKey;
     

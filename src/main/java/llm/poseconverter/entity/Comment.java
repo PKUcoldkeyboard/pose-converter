@@ -7,19 +7,19 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 
-@TableName("pc_post")
-public class Post {
+@TableName("pc_comment")
+public class Comment {
     @TableId(value = "id", type = IdType.AUTO)
     private Long id;
-
-    @TableField("title")
-    private String title;
 
     @TableField("content")
     private String content;
 
     @TableField("user_id")
     private Long userId;
+
+    @TableField("post_id")
+    private Long postId;
 
     @TableField("create_time")
     private LocalDateTime createTime;
@@ -33,14 +33,6 @@ public class Post {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
     }
 
     public String getContent() {
@@ -59,6 +51,14 @@ public class Post {
         this.userId = userId;
     }
 
+    public Long getPostId() {
+        return postId;
+    }
+
+    public void setPostId(Long postId) {
+        this.postId = postId;
+    }
+
     public LocalDateTime getCreateTime() {
         return createTime;
     }
@@ -74,6 +74,4 @@ public class Post {
     public void setUpdateTime(LocalDateTime updateTime) {
         this.updateTime = updateTime;
     }
-
-    
 }

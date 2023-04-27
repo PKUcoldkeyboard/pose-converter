@@ -12,21 +12,21 @@ import org.springframework.web.multipart.MultipartFile;
 
 import cn.dev33.satoken.util.SaResult;
 import llm.poseconverter.service.ImageService;
-import llm.poseconverter.utils.MinioUtils;
+import llm.poseconverter.service.MinioService;
 
 @Service
 public class ImageServiceImpl implements ImageService{
 
     @Resource
-    private MinioUtils minioUtils;
+    private MinioService minioService;
     
     @Override
-    public SaResult convert(MultipartFile file) throws Exception {
+    public SaResult convert(String bucketName, MultipartFile file) throws Exception {
         // 首先上传到minio
-        String imageUrl = minioUtils.upload(file);
+        String imageUrl = minioService.uploadFile(bucketName, file);
 
         String url = "http://localhost:5000/image/detect/pose";
-        String json = "{\"image_url\":\"" + imageUrl + "\"}";
+        String json = "{\"bucket_name\":\"" + bucketName + "\",\"image_url\":\"" + imageUrl + "\"}";
 
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();

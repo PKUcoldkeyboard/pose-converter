@@ -20,12 +20,12 @@ public class ImageController {
 
     @PostMapping("convert")
     @ResponseBody
-    public SaResult convert(@RequestParam("file") MultipartFile file) throws Exception {
+    public SaResult convert(@RequestParam String bucketName, @RequestParam("file") MultipartFile file) throws Exception {
         // 检查是否是mp4
         String fileName = file.getOriginalFilename();
         if (!fileName.endsWith(".png")) {
             return SaResult.error("请上传png格式的图片");
         }
-        return imageService.convert(file);
+        return imageService.convert(bucketName, file);
     }
 }

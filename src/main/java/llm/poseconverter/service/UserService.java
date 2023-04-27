@@ -8,7 +8,7 @@ public interface UserService {
     /*
      * 注册
      */
-    User register(RegisterDto registerDto);
+    User register(RegisterDto registerDto) throws Exception;
 
     /*
      * 登录，返回用户id
