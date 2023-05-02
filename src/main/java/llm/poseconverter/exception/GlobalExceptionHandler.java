@@ -1,5 +1,6 @@
 package llm.poseconverter.exception;
 
+import java.net.ConnectException;
 import java.util.stream.Collectors;
 
 import org.springframework.validation.BindException;
@@ -22,6 +23,12 @@ public class GlobalExceptionHandler {
     @ResponseBody
     public SaResult error(Exception e) {
         return SaResult.error(e.getMessage());
+    }
+
+    @ExceptionHandler(ConnectException.class)
+    @ResponseBody
+    public SaResult error(ConnectException e) {
+        return SaResult.error("连接服务器失败");
     }
 
     @ExceptionHandler(BindException.class)

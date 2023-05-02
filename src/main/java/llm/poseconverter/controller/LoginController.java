@@ -30,9 +30,10 @@ public class LoginController {
         Long userId = userService.login(loginDto.getUsername(), loginDto.getPassword());
         StpUtil.login(userId);
         SaTokenInfo tokenInfo = StpUtil.getTokenInfo();
-        Map<String, String> tokenMap = new HashMap<>();
+        Map<String, Object> tokenMap = new HashMap<>();
         tokenMap.put("token", tokenInfo.getTokenValue());
         tokenMap.put("tokenHead", tokenInfo.getTokenName());
+        tokenMap.put("userId", userId);
         return SaResult.data(tokenMap).setMsg("登录成功！");
     }
 

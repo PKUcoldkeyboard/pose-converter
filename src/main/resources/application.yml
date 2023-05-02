@@ -38,41 +38,4 @@ spring:
     username: root
     password: MOQ1zNH3YqWYF4smHiQf
 
-# mybatis-plus:
-#   configuration:
-#     # 开启SQL语句打印
-#     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
-
-# 加密公私钥
-private-key: MIICdwIBADANBgkqhkiG9w0BAQEFAASCAmEwggJdAgEAAoGBAKm9sfBn+f9LLn3zXSOQdMUa8aVs9b5q2GflWmYtF+WlNJPULpwqQPpOGMJ1qIHFyims6ilRGvI++Jz2rXHgnexV0u0JNgCRh0fKVeDlWTq5YQyW4WcjtEGV+loa4hhyRwID/DY/hpfDDlMxDpBHzYbrIBL2vPx9S2zz+hM4gX3dAgMBAAECgYBhHgkGLOeL2v8xzyFWLNuyvtTNuobsOQOyhjZvyZMnsJthjYBRl5dv32kpMdqEzZ76s1WS6DXLrp3eaQEZ69NOqnt/pPlki3dzDrUzQvKp+176nN500nuyO3fdPwn7CrDJMogDedb/GTAcfKUdFAyF98Kk0gDQCq6g7tAU3I/IPQJBAOeYRtqIfSyxvZp3WQoWBvE7tjpD3NYUjUKCMMwb5jZehOEYQ5UcrySl+Yn4nX+RfkY2QhAzWem6PR14OK47MrcCQQC7oMpLiUHYxh7QeIoGyxdy2o8akYbGIl9TfTxlssywND6Mj4JG8CARcdldO08LRE0pAIhz20uIbWh3dWxtLDALAkEAon3HCMFHAjrbCyu9v0PhLxR0MME4isP0sLtjvXG9vlvm44AAuvhbMl15jgJvjvfoHx8mjvNYnJLdGnYlXqmOVQJBAJlext3V9dg/osKgNZt1+dXtqBp8qKFfSXLSpUMwU7cZDaQSTtizwlLgMGDQcT1xeG0yvVePA4AihslXV+kpvJ8CQGHBqLIhqgbb8ZSqJ2bdeXezPug3+WzVnY5SAQtBtE7t8FKUNZty10RhLZU3YsdhfV2F4jZHpBPygJ6efCs0S+k=
-public-key: MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCpvbHwZ/n/Sy59810jkHTFGvGlbPW+athn5VpmLRflpTST1C6cKkD6ThjCdaiBxcoprOopURryPvic9q1x4J3sVdLtCTYAkYdHylXg5Vk6uWEMluFnI7RBlfpaGuIYckcCA/w2P4aXww5TMQ6QR82G6yAS9rz8fUts8/oTOIF93QIDAQAB
-
-#springdoc:
-#  swagger-ui:
-#    path: /swagger-ui.html
-#    tags-sorter: alpha
-#    operations-sorter: alpha
-#    show-extensions: true
-#  api-docs:
-#    path: /v3/api-docs
-#  group-configs:
-#    - group: 'default'
-#      paths-to-match: '/test/**'
-#      packages-to-scan: com.xiaominfo.knife4j.demo.web
-#  default-flat-param-object: false
-#knife4j:
-#  enable: true
-#  setting:
-#    language: zh_cn
-#    swagger-model-name: 实体类列表
-#  documents:
-#    - name: 标题1
-#      locations: classpath:markdown/*
-#      group: default
-#    - name: 标题2
-#      locations: classpath:markdown1/*
-#      group: 用户模块
-#  basic:
-#    enable: false
-#    username: zhangsan
-#    password: lisi
+    
