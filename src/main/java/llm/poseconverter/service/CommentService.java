@@ -7,7 +7,8 @@ import llm.poseconverter.entity.Comment;
 public interface CommentService {
     Comment saveComment(Comment comment);
     Comment getCommentById(Long id);
-    List<Comment> getCommentsByPostId(Long postId, Long pageNum, Long pageSize);
+    List<Comment> getCommentsByPostId(Long postId);
+    List<Comment> getComments();
     Comment updateComment(Long id, Comment updatedComment); 
     void deleteComment(Long id);
 }

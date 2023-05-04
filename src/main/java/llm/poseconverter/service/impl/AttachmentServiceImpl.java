@@ -1,5 +1,6 @@
 package llm.poseconverter.service.impl;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -21,6 +22,8 @@ public class AttachmentServiceImpl implements AttachmentService {
 
     @Override
     public Attachment saveAttachment(Attachment attachment) {
+        attachment.setCreateTime(LocalDateTime.now());
+        attachment.setUpdateTime(LocalDateTime.now());
         attachmentMapper.insert(attachment);
         return attachment;
     }
@@ -44,6 +47,7 @@ public class AttachmentServiceImpl implements AttachmentService {
 
     @Override
     public Attachment updateAttachment(Attachment updatedAttachment) {
+        updatedAttachment.setUpdateTime(LocalDateTime.now());
         attachmentMapper.updateById(updatedAttachment);
         return updatedAttachment;
     }

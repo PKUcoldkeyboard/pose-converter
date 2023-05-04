@@ -1,5 +1,6 @@
 package llm.poseconverter.service.impl;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -21,6 +22,8 @@ public class PostServiceImpl implements PostService{
 
     @Override
     public Post addPost(Post post) {
+        post.setCreateTime(LocalDateTime.now());
+        post.setUpdateTime(LocalDateTime.now());
         postMapper.insert(post);
         return post;
     }
@@ -45,6 +48,7 @@ public class PostServiceImpl implements PostService{
         if (existingPost == null) {
             throw new CustomException("该帖子不存在");
         }
+        post.setUpdateTime(LocalDateTime.now());
         postMapper.updateById(post);
     }
 

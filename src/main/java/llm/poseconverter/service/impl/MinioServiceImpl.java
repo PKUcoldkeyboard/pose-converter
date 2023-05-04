@@ -47,6 +47,7 @@ public class MinioServiceImpl implements MinioService {
                 .stream(inputStream, size, -1)
                 .contentType(contentType)
                 .build());
+        inputStream.close();
 
         return endPoint + "/" + bucketName + "/" + filename;
     }
@@ -103,5 +104,4 @@ public class MinioServiceImpl implements MinioService {
         String policyJson = "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Effect\":\"Allow\",\"Principal\":\"*\",\"Action\":\"s3:GetObject\",\"Resource\":\"arn:aws:s3:::" + bucketName + "/*\"}]}";
         minioClient.setBucketPolicy(SetBucketPolicyArgs.builder().bucket(bucketName).config(policyJson).build());
     }
-
 }

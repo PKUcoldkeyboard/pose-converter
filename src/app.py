@@ -20,21 +20,21 @@ minio_conf = {
     'secure': False
 }
 
-def upload_folder(folder_path):
+def upload_folder(bucket_name, folder_path):
     ret = []
     client = minio.Minio(**minio_conf)
-    found = client.bucket_exists('pose-converter')
+    found = client.bucket_exists(bucket_name)
     
     if not found:
-        client.make_bucket('pose-converter')
+        client.make_bucket(bucket_name)
     
     for root, dirs, files in os.walk(folder_path):
         for file in files:
             file_path = os.path.join(root, file)
             object_name = file_path.replace('\\', '/')
             if object_name.endswith("mp4") or object_name.endswith("png"):
-                ret.append(minio_conf['endpoint'] + '/pose-converter/' + object_name)
-            client.fput_object("pose-converter", object_name, file_path)
+                ret.append(minio_conf['endpoint'] + '/' +  bucket_name + '/' + object_name)
+            client.fput_object(bucket_name, object_name, file_path)
             
     return ret
 
@@ -51,11 +51,12 @@ def remove_folder(path):
 def detect_image_pose():
     # 从POST请求中获取图像文件的URL地址
     data = request.get_json()
+    bucket_name = data['bucket_name']
     image_url = data['image_url']
     # 生成一个随机的UUID
     random_uuid = str(uuid.uuid4())
     # 处理图像并保存结果
-    result = process_image(image_url, random_uuid)
+    result = process_image(bucket_name, image_url, random_uuid)
     # 返回JSON响应
     response = jsonify(result)
     # 设置允许的请求来源
@@ -66,18 +67,19 @@ def detect_image_pose():
 def detect_video_pose():
     # 从POST请求中获取图像文件的URL地址
     data = request.get_json()
+    bucket_name = data['bucket_name']
     video_url = data['video_url']
     # 生成一个随机的UUID
     random_uuid = str(uuid.uuid4())
     # 处理图像并保存结果
-    result = process_video(video_url, random_uuid)
+    result = process_video(bucket_name, video_url, random_uuid)
     # 返回JSON响应
     response = jsonify(result)
     # 设置允许的请求来源
     response.headers.add('Access-Control-Allow-Origin', '*')
     return response
 
-def process_image(image_url, random_uuid):
+def process_image(bucket_name, image_url, random_uuid):
     mp_drawing = mp.solutions.drawing_utils
     mp_pose = mp.solutions.pose
 
@@ -144,7 +146,7 @@ def process_image(image_url, random_uuid):
     
     # 上传到minio中
     work_dir = 'output_pic/' + random_uuid
-    minio_image_path = upload_folder(work_dir)[0]
+    minio_image_path = upload_folder(bucket_name, work_dir)[0]
     
     # 删除创建的临时目录
     remove_folder(work_dir)
@@ -156,7 +158,7 @@ def process_image(image_url, random_uuid):
     }
     return result
 
-def process_video(video_url, random_uuid):
+def process_video(bucket_name, video_url, random_uuid):
     # 设置随机文件
     vd = os.path.join("output_video", random_uuid)
     # 关键点文件
@@ -226,7 +228,7 @@ def process_video(video_url, random_uuid):
     
     # 上传到minio中
     work_dir = 'output_video/' + random_uuid
-    minio_video_path = upload_folder(work_dir)[0]
+    minio_video_path = upload_folder(bucket_name, work_dir)[0]
     
     # 删除创建的临时目录
     remove_folder(work_dir)

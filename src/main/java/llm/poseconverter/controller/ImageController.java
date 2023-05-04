@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
 
 import cn.dev33.satoken.util.SaResult;
 import llm.poseconverter.service.ImageService;
@@ -20,12 +19,7 @@ public class ImageController {
 
     @PostMapping("convert")
     @ResponseBody
-    public SaResult convert(@RequestParam String bucketName, @RequestParam("file") MultipartFile file) throws Exception {
-        // 检查是否是mp4
-        String fileName = file.getOriginalFilename();
-        if (!fileName.endsWith(".png")) {
-            return SaResult.error("请上传png格式的图片");
-        }
-        return imageService.convert(bucketName, file);
+    public SaResult convert(@RequestParam String bucketName, @RequestParam("imageUrl") String imageUrl) throws Exception {
+        return SaResult.data(imageService.convert(bucketName, imageUrl));
     }
 }

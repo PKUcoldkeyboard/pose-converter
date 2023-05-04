@@ -8,7 +8,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.multipart.MultipartFile;
 
 import cn.dev33.satoken.util.SaResult;
 import llm.poseconverter.service.MinioService;
@@ -21,9 +20,7 @@ public class VideoServiceImpl implements VideoService {
     private MinioService minioService;
 
     @Override
-    public SaResult convert(String bucketName, MultipartFile file) throws Exception {
-        // 首先上传到Minio，得到视频url
-        String videoUrl = minioService.uploadFile(bucketName, file);
+    public SaResult convert(String bucketName, String videoUrl) throws Exception {
         String url = "http://localhost:5000/video/detect/pose";
         String json = "{\"bucket_name\":\"" + bucketName + "\",\"video_url\":\"" + videoUrl + "\"}";
 

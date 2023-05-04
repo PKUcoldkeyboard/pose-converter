@@ -3,6 +3,7 @@ package llm.poseconverter.controller;
 import javax.annotation.Resource;
 import javax.validation.Valid;
 
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -38,5 +39,11 @@ public class UserController {
         User user = userService.update(id, updateUserDto);
         user.setPassword(updateUserDto.getPassword());
         return SaResult.ok("修改成功！").setData(user);
+    }
+
+    @GetMapping("/user/")
+    @ResponseBody
+    public SaResult getUserList() {
+        return SaResult.data(userService.getUserList());
     }
 }

@@ -31,8 +31,8 @@ public class FileController {
     @Resource
     private MinioService minioService;
 
-    @PostMapping("/")
-    public SaResult uploadFile(@RequestParam("bucketName") String bucketName, 
+    @PostMapping("/upload/{bucketName}")
+    public SaResult uploadFile(@PathVariable("bucketName") String bucketName, 
                                @RequestParam("file") MultipartFile file) throws Exception {
         String url = minioService.uploadFile(bucketName, file);
         return SaResult.data(url);
@@ -42,6 +42,46 @@ public class FileController {
     public SaResult listFiles(@RequestParam("bucketName") String bucketName, 
                               @RequestParam("prefix") String prefix) throws Exception {
         List<Item> results = minioService.listFiles(bucketName, prefix);
+        List<Map<String, Object>> files = new ArrayList<>();
+        long totalFileSize = 0;
+        int totalFileCount = 0;
+        for (Item item : results) {
+            Map<String, Object> file = new HashMap<>();
+            file.put("name", item.objectName());
+            file.put("size", item.size());
+            file.put("lastModified", item.lastModified().toString());
+            file.put("isDir", item.isDir());
+            file.put("url", endPoint + "/" + bucketName + "/" + item.objectName());
+            file.put("etag", item.etag());
+            file.put("isDeleteMarker", item.isDeleteMarker());
+            file.put("isLatest", item.isLatest());
+            file.put("versionId", item.versionId());
+            file.put("storageClass", item.storageClass());
+            files.add(file);
+            totalFileSize += item.size();
+            totalFileCount++;
+        }
+        // 最终json格式，文件总大小，文件个数，每个文件的信息
+        Map<String, Object> result = new HashMap<>();
+        result.put("totalFileSize", totalFileSize);
+        result.put("totalFileCount", totalFileCount);
+        result.put("files", files);
+        return SaResult.data(result);
+    }
+
+    @DeleteMapping("/{bucketName}/{objectName}")
+    public SaResult deleteFile(@PathVariable("bucketName") String bucketName, 
+                               @PathVariable("objectName") String objectName) throws Exception {
+        minioService.deleteFile(bucketName, objectName);
+        return SaResult.data("删除成功");
+    }
+
+    @GetMapping("/search")
+    public SaResult searchFiles(@RequestParam("bucketName") String bucketName, 
+                                @RequestParam("prefix") String prefix,
+                                @RequestParam("keyword") String keyword) throws Exception {
+        
+        List<Item> results = minioService.searchFiles(bucketName, prefix, keyword);
         List<Map<String, Object>> files = new ArrayList<>();
         for (Item item : results) {
             Map<String, Object> file = new HashMap<>();
@@ -58,19 +98,5 @@ public class FileController {
             files.add(file);
         }
         return SaResult.data(files);
-    }
-
-    @DeleteMapping("/{bucketName}/{objectName}")
-    public SaResult deleteFile(@PathVariable("bucketName") String bucketName, 
-                               @PathVariable("objectName") String objectName) throws Exception {
-        minioService.deleteFile(bucketName, objectName);
-        return SaResult.data("删除成功");
-    }
-
-    @GetMapping("/search")
-    public SaResult searchFiles(@RequestParam("bucketName") String bucketName, 
-                                @RequestParam("prefix") String prefix,
-                                @RequestParam("keyword") String keyword) throws Exception {
-        return SaResult.data(minioService.searchFiles(bucketName, prefix, keyword));
     }
 }

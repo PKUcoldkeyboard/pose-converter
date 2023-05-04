@@ -13,6 +13,7 @@ import llm.poseconverter.service.UserService;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import javax.annotation.Resource;
 
@@ -76,5 +77,11 @@ public class UserServiceImpl implements UserService {
         user.setUpdateTime(LocalDateTime.now());
         userMapper.updateById(user);
         return user;
+    }
+
+    @Override
+    public List<User> getUserList() {
+        List<User> records = userMapper.selectList(null);
+        return records;
     }
 }

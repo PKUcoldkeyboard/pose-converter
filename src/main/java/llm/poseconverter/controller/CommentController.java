@@ -2,13 +2,10 @@ package llm.poseconverter.controller;
 
 import java.util.List;
 
-import javax.validation.Valid;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import cn.dev33.satoken.util.SaResult;
-import llm.poseconverter.dto.PageDto;
 import llm.poseconverter.entity.Comment;
 import llm.poseconverter.service.CommentService;
 
@@ -18,6 +15,12 @@ public class CommentController {
     
     @Autowired
     private CommentService commentService;
+
+    @GetMapping("/")
+    public SaResult getComments() {
+        List<Comment> comments = commentService.getComments();
+        return SaResult.data(comments);
+    }
     
     @GetMapping("/{id}")
     public SaResult getCommentById(@PathVariable Long id) {
@@ -26,8 +29,8 @@ public class CommentController {
     }
     
     @GetMapping("/post/{postId}")
-    public SaResult getCommentsByPostId(@PathVariable Long postId, @RequestBody @Valid PageDto pageDto) {
-        List<Comment> comments = commentService.getCommentsByPostId(postId, pageDto.getPageNum(), pageDto.getPageSize());
+    public SaResult getCommentsByPostId(@PathVariable Long postId) {
+        List<Comment> comments = commentService.getCommentsByPostId(postId);
         return SaResult.data(comments);
     }
     

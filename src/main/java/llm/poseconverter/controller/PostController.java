@@ -3,7 +3,6 @@ package llm.poseconverter.controller;
 import java.util.List;
 
 import javax.annotation.Resource;
-import javax.validation.Valid;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,11 +11,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import cn.dev33.satoken.util.SaResult;
-import llm.poseconverter.dto.PageDto;
 import llm.poseconverter.entity.Post;
 import llm.poseconverter.service.PostService;
 
@@ -35,8 +34,8 @@ public class PostController {
 
     @GetMapping("/")
     @ResponseBody
-    public SaResult getPostList(@RequestBody @Valid PageDto pageDto) {
-        List<Post> posts = postService.getPostList(pageDto.getPageNum(), pageDto.getPageSize());
+    public SaResult getPostList(@RequestParam("pageNum") Long pageNum, @RequestParam("pageSize") Long pageSize) {
+        List<Post> posts = postService.getPostList(pageNum, pageSize);
         return SaResult.data(posts);
     }
 

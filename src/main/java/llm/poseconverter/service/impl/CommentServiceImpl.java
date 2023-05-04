@@ -1,12 +1,11 @@
 package llm.poseconverter.service.impl;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import javax.annotation.Resource;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-
 import org.springframework.stereotype.Service;
 
 import llm.poseconverter.entity.Comment;
@@ -21,6 +20,8 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public Comment saveComment(Comment comment) {
+        comment.setCreateTime(LocalDateTime.now());
+        comment.setUpdateTime(LocalDateTime.now());
         commentMapper.insert(comment);
         return comment;
     }
@@ -35,12 +36,10 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public List<Comment> getCommentsByPostId(Long postId, Long pageNum, Long pageSize) {
-        Page<Comment> page = new Page<>(pageNum, pageSize);
+    public List<Comment> getCommentsByPostId(Long postId) {
         LambdaQueryWrapper<Comment> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(Comment::getPostId, postId);
-        Page<Comment> commentPage = commentMapper.selectPage(page, queryWrapper);
-        List<Comment> records = commentPage.getRecords();
+        List<Comment> records = commentMapper.selectList(queryWrapper);
         return records;
     }
 
@@ -50,6 +49,7 @@ public class CommentServiceImpl implements CommentService {
         if (existingComment == null) {
             throw new CustomException("该评论不存在");
         }
+        updatedComment.setUpdateTime(LocalDateTime.now());
         commentMapper.updateById(updatedComment);
         return existingComment;
     }
@@ -57,5 +57,11 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public void deleteComment(Long id) {
         commentMapper.deleteById(id);
+    }
+
+    @Override
+    public List<Comment> getComments() {
+        List<Comment> records = commentMapper.selectList(null);
+        return records;
     }
 }
