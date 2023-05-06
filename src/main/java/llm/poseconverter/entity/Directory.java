@@ -1,19 +1,22 @@
 package llm.poseconverter.entity;
 
-public class Directory {
-    private String directoryName;
+import java.time.ZonedDateTime;
+import java.util.List;
 
-    public Directory(String directoryName) {
-        this.directoryName = directoryName;
+public class Directory extends File {
+    private List<File> children;
+
+    public Directory(String objectName, String url, List<File> children) {
+        super(objectName, 0, ZonedDateTime.now(), url, true);
+        this.children = children;
     }
 
-    public String getDirectoryName() {
-        return directoryName;
+    public List<File> getChildren() {
+        return children;
     }
 
-    public void setDirectoryName(String directoryName) {
-        this.directoryName = directoryName;
+    public void setChildren(List<File> children) {
+        this.children = children;
     }
 
-    
 }

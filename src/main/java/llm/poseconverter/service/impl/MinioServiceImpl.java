@@ -60,26 +60,97 @@ public class MinioServiceImpl implements MinioService {
     @Override
     public SaResult listFiles(String bucketName, String prefix) throws Exception {
         List<File> files = new ArrayList<>();
-        List<Directory> directories = new ArrayList<>();
 
         Iterable<Result<Item>> results = minioClient.listObjects(
             ListObjectsArgs.builder().bucket(bucketName).prefix(prefix).recursive(false).build());
-    
+
         // 遍历结果，区分文件和目录
         for (Result<Item> result : results) {
             Item item = result.get();
             if (item.isDir()) {
-                directories.add(new Directory(item.objectName()));
+                files.add(constructDirectory(item, bucketName, prefix));
             } else {
-                files.add(new File(item.objectName(), item.size(), item.lastModified(), 
-                          endPoint + "/" + bucketName + prefix + "/" + item.objectName()));
+                // 如果objectName存在/，则获取objectName最后一个/后面的内容
+                String objectName = item.objectName();
+                if (objectName.contains("/")) {
+                    char last = objectName.charAt(objectName.length() - 1);
+                    objectName = last == '/' ? objectName.substring(0, objectName.length() - 1) : objectName;
+                    objectName = objectName.substring(objectName.lastIndexOf("/") + 1);
+                }
+                files.add(new File(objectName, item.size(), item.lastModified(),
+                        endPoint + "/" + bucketName + "/" + item.objectName(), false));
             }
         }
 
-        Map<String, Object> map = new HashMap<>();
-        map.put("files", files);
-        map.put("directories", directories);
-        return SaResult.data(map);
+        return SaResult.data(files);
+    }
+
+    private File constructDirectory(Item item, String bucketName, String prefix) throws Exception {
+        List<File> children = new ArrayList<>();
+
+        String newPrefix = item.objectName();
+
+        Iterable<Result<Item>> results = minioClient.listObjects(
+            ListObjectsArgs.builder().bucket(bucketName).prefix(newPrefix).recursive(false).build());
+
+        for (Result<Item> result : results) {
+            Item childItem = result.get();
+            if (childItem.isDir()) {
+                children.add(constructDirectory(childItem, bucketName, newPrefix));
+            } else {
+                String objectName = childItem.objectName();
+                if (objectName.contains("/")) {
+                    char last = objectName.charAt(objectName.length() - 1);
+                    objectName = last == '/' ? objectName.substring(0, objectName.length() - 1) : objectName;
+                    objectName = objectName.substring(objectName.lastIndexOf("/") + 1);
+                }
+                children.add(new File(objectName, childItem.size(), childItem.lastModified(),
+                        endPoint + "/" + bucketName + "/" + childItem.objectName(), false));
+            }
+        }
+        String objectName = item.objectName();
+        if (objectName.contains("/")) {
+            char last = objectName.charAt(objectName.length() - 1);
+            objectName = last == '/' ? objectName.substring(0, objectName.length() - 1) : objectName;
+            objectName = objectName.substring(objectName.lastIndexOf("/") + 1);
+        }
+        return new Directory(objectName,
+                endPoint + "/" + bucketName + "/" + item.objectName(), children);
+    }
+
+    private File constructDirectory(Item item, String bucketName, String prefix, String keyword) throws Exception {
+        List<File> children = new ArrayList<>();
+    
+        String newPrefix = item.objectName();
+        Iterable<Result<Item>> results = minioClient.listObjects(
+            ListObjectsArgs.builder().bucket(bucketName).prefix(newPrefix).recursive(false).build());
+    
+        for (Result<Item> result : results) {
+            Item childItem = result.get();
+            if (!childItem.objectName().contains(keyword)) {
+                continue;
+            }
+            if (childItem.isDir()) {
+                children.add(constructDirectory(childItem, bucketName, newPrefix, keyword));
+            } else {
+                String objectName = childItem.objectName();
+                if (objectName.contains("/")) {
+                    objectName = objectName.substring(0, objectName.length() - 1);
+                    objectName = objectName.substring(objectName.lastIndexOf("/") + 1);
+                }
+                children.add(new File(childItem.objectName(), childItem.size(), childItem.lastModified(),
+                          endPoint + "/" + bucketName + newPrefix + "/" + childItem.objectName(), false));
+            }
+        }
+        
+        String objectName = item.objectName();
+        if (objectName.contains("/")) {
+            char last = objectName.charAt(objectName.length() - 1);
+            objectName = last == '/' ? objectName.substring(0, objectName.length() - 1) : objectName;
+            objectName = objectName.substring(objectName.lastIndexOf("/") + 1);
+        }
+        return new Directory(objectName,
+                endPoint + "/" + bucketName + prefix + "/" + item.objectName(), children);
     }
 
     @Override
@@ -90,7 +161,7 @@ public class MinioServiceImpl implements MinioService {
     @Override
     public SaResult searchFiles(String bucketName, String prefix, String keyword) throws Exception {
         List<File> files = new ArrayList<>();
-        List<Directory> directories = new ArrayList<>();
+
         Iterable<Result<Item>> results = minioClient.listObjects(
             ListObjectsArgs.builder().bucket(bucketName).prefix(prefix).recursive(false).build());
     
@@ -101,16 +172,15 @@ public class MinioServiceImpl implements MinioService {
                 continue;
             }
             if (item.isDir()) {
-                directories.add(new Directory(item.objectName()));
+                files.add(constructDirectory(item, bucketName, prefix, keyword));
             } else {
                 files.add(new File(item.objectName(), item.size(), item.lastModified(), 
-                          endPoint + "/" + bucketName + prefix + "/" + item.objectName()));
+                          endPoint + "/" + bucketName + prefix + "/" + item.objectName(), false));
             }
         }
 
         Map<String, Object> map = new HashMap<>();
         map.put("files", files);
-        map.put("directories", directories);
         return SaResult.data(map);
     }
 

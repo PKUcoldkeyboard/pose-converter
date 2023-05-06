@@ -101,7 +101,7 @@ def process_image(bucket_name, image_url, random_uuid):
         os.makedirs(save_folder1)
     output_blend_file = os.path.join(save_folder1, "0.blend")
     # 图片
-    output_pic_images = "output_pic_images"
+    output_pic_images = "output_pic_image"
     save_folder2 = os.path.join(pic, output_pic_images)
     if not os.path.exists(save_folder2):
         os.makedirs(save_folder2)
@@ -172,8 +172,8 @@ def process_video(bucket_name, video_url, random_uuid):
     if not os.path.exists(output_blend_folder):
         os.makedirs(output_blend_folder)
     # 视频
-    output_pic_images = "output_video_mp4"
-    output_video_mp4_folder = os.path.join(vd, output_pic_images)
+    output_pic_video = "output_video_mp4"
+    output_video_mp4_folder = os.path.join(vd, output_pic_video)
     if not os.path.exists(output_video_mp4_folder):
         os.makedirs(output_video_mp4_folder)
 

@@ -7,12 +7,20 @@ public class File {
     private long fileSize;
     private ZonedDateTime lastModified;
     private String url;
+    private boolean isDir;
 
-    public File(String fileName, long fileSize, ZonedDateTime lastModified, String url) {
+    public File(String fileName, long fileSize, ZonedDateTime lastModified, String url, boolean isDir) {
         this.fileName = fileName;
         this.fileSize = fileSize;
         this.lastModified = lastModified;
         this.url = url;
+        this.isDir = isDir;
+    }
+    public boolean getIsDir() {
+        return isDir;
+    }
+    public void setDir(boolean isDir) {
+        this.isDir = isDir;
     }
     public String getFileName() {
         return fileName;
