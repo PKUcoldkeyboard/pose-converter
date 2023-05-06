@@ -1,10 +1,5 @@
 package llm.poseconverter.controller;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import javax.annotation.Resource;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -18,7 +13,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import cn.dev33.satoken.util.SaResult;
-import io.minio.messages.Item;
 import llm.poseconverter.service.MinioService;
 
 @RestController
@@ -41,37 +35,13 @@ public class FileController {
     @GetMapping("/")
     public SaResult listFiles(@RequestParam("bucketName") String bucketName, 
                               @RequestParam("prefix") String prefix) throws Exception {
-        List<Item> results = minioService.listFiles(bucketName, prefix);
-        List<Map<String, Object>> files = new ArrayList<>();
-        long totalFileSize = 0;
-        int totalFileCount = 0;
-        for (Item item : results) {
-            Map<String, Object> file = new HashMap<>();
-            file.put("name", item.objectName());
-            file.put("size", item.size());
-            file.put("lastModified", item.lastModified().toString());
-            file.put("isDir", item.isDir());
-            file.put("url", endPoint + "/" + bucketName + "/" + item.objectName());
-            file.put("etag", item.etag());
-            file.put("isDeleteMarker", item.isDeleteMarker());
-            file.put("isLatest", item.isLatest());
-            file.put("versionId", item.versionId());
-            file.put("storageClass", item.storageClass());
-            files.add(file);
-            totalFileSize += item.size();
-            totalFileCount++;
-        }
-        // 最终json格式，文件总大小，文件个数，每个文件的信息
-        Map<String, Object> result = new HashMap<>();
-        result.put("totalFileSize", totalFileSize);
-        result.put("totalFileCount", totalFileCount);
-        result.put("files", files);
-        return SaResult.data(result);
+        SaResult result = minioService.listFiles(bucketName, prefix);
+        return result;
     }
 
-    @DeleteMapping("/{bucketName}/{objectName}")
-    public SaResult deleteFile(@PathVariable("bucketName") String bucketName, 
-                               @PathVariable("objectName") String objectName) throws Exception {
+    @DeleteMapping("/delete")
+    public SaResult deleteFile(@RequestParam("bucketName") String bucketName, 
+                               @RequestParam("objectName") String objectName) throws Exception {
         minioService.deleteFile(bucketName, objectName);
         return SaResult.data("删除成功");
     }
@@ -81,22 +51,12 @@ public class FileController {
                                 @RequestParam("prefix") String prefix,
                                 @RequestParam("keyword") String keyword) throws Exception {
         
-        List<Item> results = minioService.searchFiles(bucketName, prefix, keyword);
-        List<Map<String, Object>> files = new ArrayList<>();
-        for (Item item : results) {
-            Map<String, Object> file = new HashMap<>();
-            file.put("name", item.objectName());
-            file.put("size", item.size());
-            file.put("lastModified", item.lastModified().toString());
-            file.put("isDir", item.isDir());
-            file.put("url", endPoint + "/" + bucketName + "/" + item.objectName());
-            file.put("etag", item.etag());
-            file.put("isDeleteMarker", item.isDeleteMarker());
-            file.put("isLatest", item.isLatest());
-            file.put("versionId", item.versionId());
-            file.put("storageClass", item.storageClass());
-            files.add(file);
-        }
-        return SaResult.data(files);
+        return minioService.searchFiles(bucketName, prefix, keyword);
+    }
+
+    @GetMapping("/meta")
+    public SaResult getBucketMetaData(@RequestParam("bucketName") String bucketName) throws Exception {
+        SaResult result = minioService.getBucketMetaData(bucketName);
+        return result;
     }
 }
