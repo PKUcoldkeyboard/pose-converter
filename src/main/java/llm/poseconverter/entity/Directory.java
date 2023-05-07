@@ -6,8 +6,8 @@ import java.util.List;
 public class Directory extends File {
     private List<File> children;
 
-    public Directory(String objectName, String url, List<File> children) {
-        super(objectName, 0, ZonedDateTime.now(), url, true);
+    public Directory(String objectName, String url, List<File> children, String prefix) {
+        super(objectName, 0, ZonedDateTime.now(), url, true, prefix);
         this.children = children;
     }
 

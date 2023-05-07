@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -58,5 +59,21 @@ public class FileController {
     public SaResult getBucketMetaData(@RequestParam("bucketName") String bucketName) throws Exception {
         SaResult result = minioService.getBucketMetaData(bucketName);
         return result;
+    }
+
+    @PutMapping("/rename")
+    public SaResult renameFile(@RequestParam("bucketName") String bucketName, 
+                               @RequestParam("oldName") String oldName,
+                               @RequestParam("newName") String newName) throws Exception {
+        minioService.renameFile(bucketName, oldName, newName);
+        return SaResult.data("重命名成功");
+    }
+
+    @PutMapping("/rename/dir")
+    public SaResult renameDir(@RequestParam("bucketName") String bucketName, 
+                              @RequestParam("oldName") String oldName,
+                              @RequestParam("newName") String newName) throws Exception {
+        minioService.renameDirectory(bucketName, oldName, newName);
+        return SaResult.data("重命名成功");
     }
 }

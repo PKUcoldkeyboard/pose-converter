@@ -14,4 +14,6 @@ public interface MinioService {
     void deleteFiles(String bucketName, List<String> objectNames) throws Exception;
     SaResult searchFiles(String bucketName, String prefix, String keyword) throws Exception;
     void addBucket(String bucketName) throws Exception;
+    void renameFile(String bucketName, String oldName, String newName) throws Exception;
+    void renameDirectory(String bucketName, String oldName, String newName) throws Exception;
 }

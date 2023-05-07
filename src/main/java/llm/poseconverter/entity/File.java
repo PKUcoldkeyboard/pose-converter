@@ -3,19 +3,30 @@ package llm.poseconverter.entity;
 import java.time.ZonedDateTime;
 
 public class File {
+    private String prefix;
     private String fileName;
     private long fileSize;
     private ZonedDateTime lastModified;
     private String url;
     private boolean isDir;
 
-    public File(String fileName, long fileSize, ZonedDateTime lastModified, String url, boolean isDir) {
+    public File(String fileName, long fileSize, ZonedDateTime lastModified, String url, boolean isDir, String prefix) {
         this.fileName = fileName;
         this.fileSize = fileSize;
         this.lastModified = lastModified;
         this.url = url;
         this.isDir = isDir;
+        this.prefix = prefix;
     }
+
+    public String getPrefix() {
+        return prefix;
+    }
+
+    public void setPrefix(String prefix) {
+        this.prefix = prefix;
+    }
+
     public boolean getIsDir() {
         return isDir;
     }

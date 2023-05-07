@@ -7,13 +7,14 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import cn.dev33.satoken.util.SaResult;
 import io.minio.BucketExistsArgs;
+import io.minio.CopyObjectArgs;
+import io.minio.CopySource;
 import io.minio.ListObjectsArgs;
 import io.minio.MakeBucketArgs;
 import io.minio.MinioClient;
@@ -78,7 +79,7 @@ public class MinioServiceImpl implements MinioService {
                     objectName = objectName.substring(objectName.lastIndexOf("/") + 1);
                 }
                 files.add(new File(objectName, item.size(), item.lastModified(),
-                        endPoint + "/" + bucketName + "/" + item.objectName(), false));
+                        endPoint + "/" + bucketName + "/" + item.objectName(), false, prefix));
             }
         }
 
@@ -105,7 +106,7 @@ public class MinioServiceImpl implements MinioService {
                     objectName = objectName.substring(objectName.lastIndexOf("/") + 1);
                 }
                 children.add(new File(objectName, childItem.size(), childItem.lastModified(),
-                        endPoint + "/" + bucketName + "/" + childItem.objectName(), false));
+                        endPoint + "/" + bucketName + "/" + childItem.objectName(), false, prefix));
             }
         }
         String objectName = item.objectName();
@@ -115,7 +116,7 @@ public class MinioServiceImpl implements MinioService {
             objectName = objectName.substring(objectName.lastIndexOf("/") + 1);
         }
         return new Directory(objectName,
-                endPoint + "/" + bucketName + "/" + item.objectName(), children);
+                endPoint + "/" + bucketName + "/" + item.objectName(), children, prefix);
     }
 
     private File constructDirectory(Item item, String bucketName, String prefix, String keyword) throws Exception {
@@ -139,7 +140,7 @@ public class MinioServiceImpl implements MinioService {
                     objectName = objectName.substring(objectName.lastIndexOf("/") + 1);
                 }
                 children.add(new File(childItem.objectName(), childItem.size(), childItem.lastModified(),
-                          endPoint + "/" + bucketName + newPrefix + "/" + childItem.objectName(), false));
+                          endPoint + "/" + bucketName + newPrefix + "/" + childItem.objectName(), false, prefix));
             }
         }
         
@@ -150,7 +151,7 @@ public class MinioServiceImpl implements MinioService {
             objectName = objectName.substring(objectName.lastIndexOf("/") + 1);
         }
         return new Directory(objectName,
-                endPoint + "/" + bucketName + prefix + "/" + item.objectName(), children);
+                endPoint + "/" + bucketName + prefix + "/" + item.objectName(), children, prefix);
     }
 
     @Override
@@ -175,7 +176,7 @@ public class MinioServiceImpl implements MinioService {
                 files.add(constructDirectory(item, bucketName, prefix, keyword));
             } else {
                 files.add(new File(item.objectName(), item.size(), item.lastModified(), 
-                          endPoint + "/" + bucketName + prefix + "/" + item.objectName(), false));
+                          endPoint + "/" + bucketName + prefix + "/" + item.objectName(), false, prefix));
             }
         }
 
@@ -220,5 +221,40 @@ public class MinioServiceImpl implements MinioService {
         map.put("totalFileSize", totalFileSize);
         map.put("totalFileCount", totalFileCount);
         return SaResult.data(map);
+    }
+
+    @Override
+    public void renameFile(String bucketName, String oldName, String newName) throws Exception {
+        // 复制对象并重命名
+        CopyObjectArgs args = CopyObjectArgs.builder()
+                                .source(CopySource.builder().bucket(bucketName).object(oldName).build())
+                                .bucket(bucketName)
+                                .object(newName)
+                                .build();
+        minioClient.copyObject(args);
+        // 删除原对象
+        minioClient.removeObject(RemoveObjectArgs.builder().bucket(bucketName).object(oldName).build());
+    }
+
+    @Override
+    public void renameDirectory(String bucketName, String oldName, String newName) throws Exception {
+        // 列出源目录下的所有对象，并复制它们到目标目录中
+        List<String> objectNames = new ArrayList<>();
+        Iterable<Result<Item>> results = minioClient.listObjects(
+            ListObjectsArgs.builder().bucket(bucketName).prefix(oldName).recursive(true).build());
+        for (Result<Item> result : results) {
+            Item item = result.get();
+            String oldObjectName = item.objectName();
+            objectNames.add(oldObjectName);
+            String newObjectName = item.objectName().replace(oldName, newName);
+            CopyObjectArgs args = CopyObjectArgs.builder()
+                                    .source(CopySource.builder().bucket(bucketName).object(oldObjectName).build())
+                                    .bucket(bucketName)
+                                    .object(newObjectName)
+                                    .build();
+            minioClient.copyObject(args);
+        }
+        // 删除原目录
+        deleteFiles(bucketName, objectNames);
     }
 }
