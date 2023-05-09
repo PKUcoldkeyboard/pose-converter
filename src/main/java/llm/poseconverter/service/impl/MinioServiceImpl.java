@@ -125,29 +125,30 @@ public class MinioServiceImpl implements MinioService {
 
     private File constructDirectory(Item item, String bucketName, String prefix, String keyword) throws Exception {
         List<File> children = new ArrayList<>();
-    
+
         String newPrefix = item.objectName();
+
         Iterable<Result<Item>> results = minioClient.listObjects(
             ListObjectsArgs.builder().bucket(bucketName).prefix(newPrefix).recursive(false).build());
-    
+
         for (Result<Item> result : results) {
             Item childItem = result.get();
             if (!childItem.objectName().contains(keyword)) {
                 continue;
             }
             if (childItem.isDir()) {
-                children.add(constructDirectory(childItem, bucketName, newPrefix, keyword));
+                children.add(constructDirectory(childItem, bucketName, newPrefix));
             } else {
                 String objectName = childItem.objectName();
                 if (objectName.contains("/")) {
-                    objectName = objectName.substring(0, objectName.length() - 1);
+                    char last = objectName.charAt(objectName.length() - 1);
+                    objectName = last == '/' ? objectName.substring(0, objectName.length() - 1) : objectName;
                     objectName = objectName.substring(objectName.lastIndexOf("/") + 1);
                 }
-                children.add(new File(childItem.objectName(), childItem.size(), childItem.lastModified(),
-                          endPoint + "/" + bucketName + newPrefix + "/" + childItem.objectName(), false, prefix));
+                children.add(new File(objectName, childItem.size(), childItem.lastModified(),
+                        endPoint + "/" + bucketName + "/" + childItem.objectName(), false, prefix));
             }
         }
-        
         String objectName = item.objectName();
         if (objectName.contains("/")) {
             char last = objectName.charAt(objectName.length() - 1);
@@ -155,7 +156,7 @@ public class MinioServiceImpl implements MinioService {
             objectName = objectName.substring(objectName.lastIndexOf("/") + 1);
         }
         return new Directory(objectName,
-                endPoint + "/" + bucketName + prefix + "/" + item.objectName(), children, prefix);
+                endPoint + "/" + bucketName + "/" + item.objectName(), children, prefix);
     }
 
     @Override
@@ -169,7 +170,7 @@ public class MinioServiceImpl implements MinioService {
 
         Iterable<Result<Item>> results = minioClient.listObjects(
             ListObjectsArgs.builder().bucket(bucketName).prefix(prefix).recursive(false).build());
-    
+
         // 遍历结果，区分文件和目录
         for (Result<Item> result : results) {
             Item item = result.get();
@@ -179,14 +180,18 @@ public class MinioServiceImpl implements MinioService {
             if (item.isDir()) {
                 files.add(constructDirectory(item, bucketName, prefix, keyword));
             } else {
-                files.add(new File(item.objectName(), item.size(), item.lastModified(), 
-                          endPoint + "/" + bucketName + prefix + "/" + item.objectName(), false, prefix));
+                // 如果objectName存在/，则获取objectName最后一个/后面的内容
+                String objectName = item.objectName();
+                if (objectName.contains("/")) {
+                    char last = objectName.charAt(objectName.length() - 1);
+                    objectName = last == '/' ? objectName.substring(0, objectName.length() - 1) : objectName;
+                    objectName = objectName.substring(objectName.lastIndexOf("/") + 1);
+                }
+                files.add(new File(objectName, item.size(), item.lastModified(),
+                        endPoint + "/" + bucketName + "/" + item.objectName(), false, prefix));
             }
         }
-
-        Map<String, Object> map = new HashMap<>();
-        map.put("files", files);
-        return SaResult.data(map);
+        return SaResult.data(files);
     }
 
     @Override

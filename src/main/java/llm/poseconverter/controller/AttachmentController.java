@@ -1,6 +1,7 @@
 package llm.poseconverter.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -40,6 +41,14 @@ public class AttachmentController {
     @ResponseBody
     public SaResult getAttachmentList(@PathVariable Long postId) {
         List<Attachment> attachments = attachmentService.getAttachmentsByPostId(postId);
+        return SaResult.data(attachments);
+    }
+
+    @PostMapping("/posts/")
+    @ResponseBody
+    public SaResult getAttachmentList(@RequestBody Map<String, List<Long>> postIdMap) {
+        List<Long> postIds = postIdMap.get("postIds");
+        List<Attachment> attachments = attachmentService.getAttachmentsByPostIds(postIds);
         return SaResult.data(attachments);
     }
 

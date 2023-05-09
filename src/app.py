@@ -234,21 +234,17 @@ def process_video(bucket_name, video_url, random_uuid):
     out.release()
     
     # 视频转码
-    input_video_path = output_video_path
     output_video_path_compatible = os.path.join(output_video_mp4_folder, "output_video_with_skeleton_compatible.mp4")
 
     # 转码参数
     input_args = "-y -i"
     output_args = "-c:v libx264 -profile:v high -level 4.0 -pix_fmt yuv420p -preset slow -crf 22 -c:a aac -b:a 128k -movflags +faststart"
 
-    cmd = f"{ffmpeg.get_ffmpeg_exe()} {input_args} {input_video_path} {output_args} {output_video_path_compatible}"
-    ffmpeg.run_command(cmd.split())
+    cmd = f"ffmpeg.exe {input_args} {output_video_path} {output_args} {output_video_path_compatible}"
+    os.system(cmd)
 
     # 删除原始视频文件
-    os.remove(input_video_path)
-
-    # 更新输出视频路径
-    output_video_path = output_video_path_compatible
+    os.remove(output_video_path)
     
     # 上传到minio中
     work_dir = 'output_video/' + random_uuid

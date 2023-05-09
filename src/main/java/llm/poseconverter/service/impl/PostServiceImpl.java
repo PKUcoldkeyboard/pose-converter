@@ -1,10 +1,10 @@
 package llm.poseconverter.service.impl;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 import javax.annotation.Resource;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 
 import org.springframework.stereotype.Service;
@@ -53,11 +53,18 @@ public class PostServiceImpl implements PostService{
     }
 
     @Override
-    public List<Post> getPostList(Long pageNum, Long pageSize) {
+    public Page<Post> getPostList(Long pageNum, Long pageSize) {
         Page<Post> page = new Page<>(pageNum, pageSize);
         Page<Post> postPage = postMapper.selectPage(page, null);
-        List<Post> records = postPage.getRecords();
-        return records;
+        return postPage;
     }
-    
+
+    @Override
+    public Page<Post> getPostListByUserId(Long userId, Long pageNum, Long pageSize) {
+        Page<Post> page = new Page<>(pageNum, pageSize);
+        QueryWrapper<Post> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("user_id", userId);
+        Page<Post> postPage = postMapper.selectPage(page, queryWrapper);
+        return postPage;
+    }
 }

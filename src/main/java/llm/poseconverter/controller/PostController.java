@@ -1,8 +1,8 @@
 package llm.poseconverter.controller;
 
-import java.util.List;
-
 import javax.annotation.Resource;
+
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -32,10 +32,17 @@ public class PostController {
         return SaResult.data(post);
     }
 
+    @GetMapping("/user/{userId}")
+    @ResponseBody
+    public SaResult getPostListByUserId(@PathVariable Long userId, @RequestParam("pageNum") Long pageNum, @RequestParam("pageSize") Long pageSize) {
+        Page<Post> posts = postService.getPostListByUserId(userId, pageNum, pageSize);
+        return SaResult.data(posts);
+    }
+
     @GetMapping("/")
     @ResponseBody
     public SaResult getPostList(@RequestParam("pageNum") Long pageNum, @RequestParam("pageSize") Long pageSize) {
-        List<Post> posts = postService.getPostList(pageNum, pageSize);
+        Page<Post> posts = postService.getPostList(pageNum, pageSize);
         return SaResult.data(posts);
     }
 

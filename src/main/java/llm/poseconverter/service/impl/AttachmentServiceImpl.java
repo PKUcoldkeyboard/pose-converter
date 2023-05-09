@@ -56,5 +56,13 @@ public class AttachmentServiceImpl implements AttachmentService {
     public void deleteAttachment(Long id) {
         attachmentMapper.deleteById(id);
     }
+
+    @Override
+    public List<Attachment> getAttachmentsByPostIds(List<Long> postIds) {
+        LambdaQueryWrapper<Attachment> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.in(Attachment::getPostId, postIds);
+        List<Attachment> attachments = attachmentMapper.selectList(queryWrapper);
+        return attachments;
+    }
     
 }
