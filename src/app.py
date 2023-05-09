@@ -32,9 +32,16 @@ def upload_folder(bucket_name, folder_path):
         for file in files:
             file_path = os.path.join(root, file)
             object_name = file_path.replace('\\', '/')
+            
+            content_type = 'application/octet-stream'
+            if object_name.endswith("mp4"):
+                content_type = 'video/mp4'
+            elif object_name.endswith("png"):
+                content_type = 'image/png'
+                
             if object_name.endswith("mp4") or object_name.endswith("png"):
                 ret.append(minio_conf['endpoint'] + '/' +  bucket_name + '/' + object_name)
-            client.fput_object(bucket_name, object_name, file_path)
+            client.fput_object(bucket_name, object_name, file_path, content_type=content_type)
             
     return ret
 
@@ -225,6 +232,23 @@ def process_video(bucket_name, video_url, random_uuid):
 
     cap.release()
     out.release()
+    
+    # 视频转码
+    input_video_path = output_video_path
+    output_video_path_compatible = os.path.join(output_video_mp4_folder, "output_video_with_skeleton_compatible.mp4")
+
+    # 转码参数
+    input_args = "-y -i"
+    output_args = "-c:v libx264 -profile:v high -level 4.0 -pix_fmt yuv420p -preset slow -crf 22 -c:a aac -b:a 128k -movflags +faststart"
+
+    cmd = f"{ffmpeg.get_ffmpeg_exe()} {input_args} {input_video_path} {output_args} {output_video_path_compatible}"
+    ffmpeg.run_command(cmd.split())
+
+    # 删除原始视频文件
+    os.remove(input_video_path)
+
+    # 更新输出视频路径
+    output_video_path = output_video_path_compatible
     
     # 上传到minio中
     work_dir = 'output_video/' + random_uuid

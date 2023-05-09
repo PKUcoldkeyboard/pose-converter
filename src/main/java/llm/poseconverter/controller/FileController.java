@@ -1,8 +1,14 @@
 package llm.poseconverter.controller;
 
+import java.io.ByteArrayOutputStream;
+
 import javax.annotation.Resource;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -47,6 +53,13 @@ public class FileController {
         return SaResult.data("删除成功");
     }
 
+    @DeleteMapping("/delete/dir")
+    public SaResult deleteDir(@RequestParam("bucketName") String bucketName, 
+                              @RequestParam("prefix") String prefix) throws Exception {
+        minioService.deleteDir(bucketName, prefix);
+        return SaResult.data("删除成功");
+    }
+
     @GetMapping("/search")
     public SaResult searchFiles(@RequestParam("bucketName") String bucketName, 
                                 @RequestParam("prefix") String prefix,
@@ -75,5 +88,16 @@ public class FileController {
                               @RequestParam("newName") String newName) throws Exception {
         minioService.renameDirectory(bucketName, oldName, newName);
         return SaResult.data("重命名成功");
+    }
+
+    @GetMapping("/download/zip")
+    public ResponseEntity<ByteArrayResource> downloadZip(@RequestParam("bucketName") String bucketName, 
+                                @RequestParam("prefix") String prefix) throws Exception {
+        ByteArrayOutputStream baos = minioService.createZipOfDirectory(bucketName, prefix);
+        ByteArrayResource resource = new ByteArrayResource(baos.toByteArray());
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=" + prefix + ".zip")
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .body(resource);
     }
 }

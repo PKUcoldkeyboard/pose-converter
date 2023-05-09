@@ -1,10 +1,13 @@
 package llm.poseconverter.service.impl;
 
+import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import javax.annotation.Resource;
 import org.springframework.beans.factory.annotation.Value;
@@ -15,6 +18,7 @@ import cn.dev33.satoken.util.SaResult;
 import io.minio.BucketExistsArgs;
 import io.minio.CopyObjectArgs;
 import io.minio.CopySource;
+import io.minio.GetObjectArgs;
 import io.minio.ListObjectsArgs;
 import io.minio.MakeBucketArgs;
 import io.minio.MinioClient;
@@ -256,5 +260,55 @@ public class MinioServiceImpl implements MinioService {
         }
         // 删除原目录
         deleteFiles(bucketName, objectNames);
+    }
+
+    @Override
+    public void deleteDir(String bucketName, String prefix) throws Exception {
+        List<String> objectNames = new ArrayList<>();
+        Iterable<Result<Item>> results = minioClient.listObjects(
+            ListObjectsArgs.builder().bucket(bucketName).prefix(prefix).recursive(true).build());
+        for (Result<Item> result : results) {
+            Item item = result.get();
+            objectNames.add(item.objectName());
+        }
+        deleteFiles(bucketName, objectNames);
+    }
+
+    @Override
+    public ByteArrayOutputStream createZipOfDirectory(String bucketName, String prefix) throws Exception {
+        List<String> objectNames = new ArrayList<>();
+        Iterable<Result<Item>> results = minioClient.listObjects(
+            ListObjectsArgs.builder().bucket(bucketName).prefix(prefix).recursive(true).build());
+        for (Result<Item> result : results) {
+            Item item = result.get();
+            objectNames.add(item.objectName());
+        }
+
+        // 创建一个 ByteArrayOutputStream 用于存储 ZIP 压缩文件
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ZipOutputStream zos = new ZipOutputStream(baos);
+
+        for (String objectName : objectNames) {
+            // 从minio获取文件
+            InputStream filStream = minioClient.getObject(
+                GetObjectArgs.builder()
+                    .bucket(bucketName)
+                    .object(objectName)
+                    .build()
+            );
+
+            // 文件添加到ZIP压缩文件
+            ZipEntry zipEntry = new ZipEntry(objectName);
+            zos.putNextEntry(zipEntry);
+            byte[] buffer = new byte[1024];
+            int bytesRead;
+            while ((bytesRead = filStream.read(buffer)) != -1) {
+                zos.write(buffer, 0, bytesRead);
+            }
+            zos.closeEntry();
+            filStream.close();
+        }
+        zos.close();
+        return baos;
     }
 }
