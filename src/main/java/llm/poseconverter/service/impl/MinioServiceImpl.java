@@ -255,7 +255,10 @@ public class MinioServiceImpl implements MinioService {
             Item item = result.get();
             String oldObjectName = item.objectName();
             objectNames.add(oldObjectName);
-            String newObjectName = item.objectName().replace(oldName, newName);
+
+            // 获取objectName()中oldName后面的内容，前面拼接上newName
+            int length = oldName.length();
+            String newObjectName = newName + "/" + oldObjectName.substring(length);
             CopyObjectArgs args = CopyObjectArgs.builder()
                                     .source(CopySource.builder().bucket(bucketName).object(oldObjectName).build())
                                     .bucket(bucketName)
