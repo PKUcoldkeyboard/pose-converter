@@ -4,9 +4,9 @@ server:
     context-path: /
 
 minio:
-  endpoint: "http://localhost:9000"
-  accessKey: NtI2o1FUgSdrRFdd
-  secretKey: c6QGip2GR3PftoHfOSQW3XQwTN15gUmr
+  endpoint: yourendpoint
+  accessKey: youraccessKey
+  secretKey: yoursecretKey
 
 sa-token:
   # token名称 (同时也是cookie名称)
@@ -24,7 +24,7 @@ sa-token:
   # 是否输出操作日志
   is-log: false
   is-print: false
-  jwt-secret-key: pose-converter-llm
+  jwt-secret-key: yourkey
   token-prefix: Bearer
 
 spring:
@@ -34,9 +34,9 @@ spring:
       max-request-size: 100MB
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://root:4l4yaQxGVAZ2MA4vru2g@containers-us-west-68.railway.app:7215/railway?useUnicode=true&characterEncoding=utf-8&useSSL=true&serverTimezone=Asia/Shanghai
-    username: root
-    password: 4l4yaQxGVAZ2MA4vru2g
+    url: jdbc:mysql://yourusername:yourpassword@yourhost:yourpost/yourdatabase?useUnicode=true&characterEncoding=utf-8&useSSL=true&serverTimezone=Asia/Shanghai
+    username: yourusername
+    password: yourpassword
     hikari:
       minimum-idle: 5
       maximum-pool-size: 15
