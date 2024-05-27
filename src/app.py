@@ -14,9 +14,9 @@ app.debug = True
 CORS(app)
 
 minio_conf = {
-    'endpoint': '127.0.0.1:9000',
-    'access_key': 'NtI2o1FUgSdrRFdd',
-    'secret_key': 'c6QGip2GR3PftoHfOSQW3XQwTN15gUmr',
+    'endpoint': 'yourendpoint',
+    'access_key': '',
+    'secret_key': '',
     'secure': False
 }
 
